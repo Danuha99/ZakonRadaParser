@@ -1,0 +1,63 @@
+# Python environments and generated caches
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+.coverage
+.coverage.*
+htmlcov/
+
+# Native build outputs and packaged releases
+native_c/dist/
+outputs/
+*.exe
+*.pdb
+*.obj
+*.o
+*.res
+*.lib
+*.dll
+
+# Local workspace, downloaded compiler and QA artifacts
+.work/
+test-data/
+
+# Runtime/user data and generated exports
+/data/
+*.db*
+*.sqlite*
+*.log
+*.log.*
+*.pdf
+*.csv
+exported_logs/
+
+# Secrets and machine-local configuration
+.env
+.env.*
+!.env.example
+settings.json
+**/config/settings.json
+settings.local.json
+config.local.json
+
+# IDE and operating system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.suo
+*.user
+
+# Temporary files
+*.tmp
+*.bak
