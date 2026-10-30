@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="176" viewBox="0 0 720 176" role="img" aria-labelledby="title desc">
+  <title id="title">ZakonDownloader</title>
+  <desc id="desc">Desktop utility for saving and reading Ukrainian legislation.</desc>
+  <image href="ZakonDownloader-logo-mark.png" x="8" y="8" width="160" height="160" preserveAspectRatio="xMidYMid meet" />
+  <text x="194" y="106" fill="#202124" font-family="Segoe UI, Arial, sans-serif" font-size="50" font-weight="650" letter-spacing="-1.2">ZakonDownloader</text>
+  <rect x="196" y="126" width="92" height="5" rx="2.5" fill="#D6A544" />
+  <text x="196" y="157" fill="#66686B" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="500" letter-spacing="1.4">UKRAINIAN LEGISLATION READER</text>
+</svg>

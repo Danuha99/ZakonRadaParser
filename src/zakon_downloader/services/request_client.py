@@ -1,0 +1,2 @@
+"""HTTP-сесія, retry."""
+# TODO

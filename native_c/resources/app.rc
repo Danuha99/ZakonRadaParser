@@ -1,0 +1,3 @@
+#include "../src/resource.h"
+IDI_ZD_APP ICON "../assets/ZakonDownloader-app.ico"
+IDI_ZD_MARK ICON "../assets/ZakonDownloader-logo-mark.ico"

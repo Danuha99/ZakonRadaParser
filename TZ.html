@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Технічне завдання для ZakonDownloader">
+  <title>ТЗ — ZakonDownloader</title>
+
+  <style>
+    :root {
+      --page-bg: #f1f1f0;
+      --paper: #ffffff;
+      --text: #252525;
+      --muted: #727272;
+      --line: #e9e9e7;
+      --accent: #1e1e1e;
+      --code-bg: #f7f7f5;
+      --success: #246b45;
+      --warning: #855e11;
+      --danger: #a13b3b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .page {
+      width: min(1080px, calc(100% - 40px));
+      margin: 92px auto;
+      background: var(--paper);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.015);
+    }
+
+    .site-header {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+      padding: 0 78px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700;
+      font-size: 17px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      font-family: Arial, sans-serif;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+
+    nav a {
+      color: #404040;
+      font-size: 13px;
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    nav a:hover {
+      opacity: 0.55;
+    }
+
+    .content {
+      padding: 62px 78px 90px;
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      margin: 0 0 18px;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    h1 {
+      max-width: 780px;
+      font-size: clamp(38px, 5vw, 57px);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      margin: 0;
+    }
+
+    .lead {
+      max-width: 750px;
+      margin: 23px 0 42px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .document-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin: 0 0 60px;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .document-meta > div {
+      padding: 15px 17px;
+      background: #fff;
+    }
+
+    .document-meta span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .document-meta strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .toc {
+      padding: 0;
+      margin: 0 0 65px;
+      border-top: 1px solid var(--line);
+    }
+
+    .toc-title {
+      margin: 0;
+      padding: 17px 0;
+      border-bottom: 1px solid var(--line);
+      font-family: Inter, ui-sans-serif, sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 13px 0;
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      text-decoration: none;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .toc a:hover {
+      color: var(--muted);
+    }
+
+    .toc-number {
+      color: var(--muted);
+      font-family: Inter, ui-sans-serif, sans-serif;
+      font-size: 12px;
+    }
+
+    .section {
+      padding: 0 0 50px;
+      margin: 0 0 50px;
+      border-bottom: 1px solid var(--line);
+      scroll-margin-top: 25px;
+    }
+
+    .section:last-child {
+      border-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    h2 {
+      margin: 0 0 23px;
+      font-size: 30px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      margin: 34px 0 13px;
+      font-size: 21px;
+      line-height: 1.35;
+    }
+
+    h4 {
+      margin: 25px 0 10px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0 0 15px;
+    }
+
+    ul, ol {
+      margin: 10px 0 20px;
+      padding-left: 22px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    .note,
+    .warning,
+    .success {
+      margin: 23px 0;
+      padding: 16px 18px;
+      border-left: 2px solid #333;
+      background: #fafaf9;
+      color: #414141;
+    }
+
+    .warning {
+      border-left-color: var(--warning);
+      background: #fcfaf4;
+    }
+
+    .success {
+      border-left-color: var(--success);
+      background: #f5faf6;
+    }
+
+    .note strong,
+    .warning strong,
+    .success strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 13px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 22px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      min-width: 620px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 13px 10px;
+      vertical-align: top;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #3f3f3f;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    td:first-child,
+    th:first-child {
+      padding-left: 0;
+    }
+
+    td:last-child,
+    th:last-child {
+      padding-right: 0;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 20px 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: var(--code-bg);
+      color: #313131;
+      font: 12px/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    code {
+      padding: 0.1em 0.35em;
+      border-radius: 2px;
+      background: var(--code-bg);
+      font: 0.88em "SFMono-Regular", Consolas, monospace;
+    }
+
+    pre code {
+      padding: 0;
+      background: transparent;
+      font-size: inherit;
+    }
+
+    .status {
+      display: inline-block;
+      margin: 2px 5px 2px 0;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #555;
+      background: #fafafa;
+      font-size: 12px;
+    }
+
+    .message-example {
+      margin: 16px 0;
+      padding: 15px 17px;
+      border: 1px solid var(--line);
+      background: #fcfcfb;
+      color: #494949;
+      white-space: pre-line;
+    }
+
+    footer {
+      padding: 28px 78px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 12px;
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        width: 100%;
+        margin: 0;
+      }
+
+      .site-header,
+      .content,
+      footer {
+        padding-left: 25px;
+        padding-right: 25px;
+      }
+
+      .site-header {
+        min-height: 64px;
+      }
+
+      nav {
+        gap: 12px;
+      }
+
+      nav a:nth-child(n+3) {
+        display: none;
+      }
+
+      .content {
+        padding-top: 45px;
+      }
+
+      .document-meta {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 39px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="site-header">
+      <a class="brand" href="#top">
+        <span class="brand-mark">☼</span>
+        <span>ZakonDownloader</span>
+      </a>
+
+      <nav aria-label="Основна навігація">
+        <a href="#overview">Огляд</a>
+        <a href="#requirements">Вимоги</a>
+        <a href="#architecture">Проєкт</a>
+        <a href="#stages">Етапи</a>
+      </nav>
+    </header>
+
+    <article class="content" id="top">
+      <p class="eyebrow">Технічна специфікація · версія 1.0</p>
+
+      <h1>Завантаження чинної редакції нормативних документів</h1>
+
+      <p class="lead">
+        Технічне завдання на розробку локального Windows-застосунку
+        <strong>ZakonDownloader</strong>. Програма отримує публічно доступний
+        текст документа з <code>zakon.rada.gov.ua</code>, формує файл
+        <code>.txt</code>, веде історію операцій та технічні журнали.
+      </p>
+
+      <div class="document-meta">
+        <div>
+          <span>Мова розробки</span>
+          <strong>Python 3.11+</strong>
+        </div>
+        <div>
+          <span>Цільова ОС</span>
+          <strong>Windows 10 / 11, 64-bit</strong>
+        </div>
+        <div>
+          <span>Формат постачання</span>
+          <strong>Автономний .exe</strong>
+        </div>
+      </div>
+
+      <nav class="toc" aria-label="Зміст">
+        <p class="toc-title">Зміст документа</p>
+        <a href="#overview"><span>Опис, межі та принципи роботи</span><span class="toc-number">01</span></a>
+        <a href="#requirements"><span>Функціональні вимоги</span><span class="toc-number">02</span></a>
+        <a href="#history"><span>Історія операцій та журнали</span><span class="toc-number">03</span></a>
+        <a href="#nonfunctional"><span>Нефункціональні вимоги</span><span class="toc-number">04</span></a>
+        <a href="#architecture"><span>Структура проєкту</span><span class="toc-number">05</span></a>
+        <a href="#data-model"><span>Модель даних</span><span class="toc-number">06</span></a>
+        <a href="#stages"><span>Черговість написання коду</span><span class="toc-number">07</span></a>
+        <a href="#acceptance"><span>Критерії приймання</span><span class="toc-number">08</span></a>
+      </nav>
+
+      <section class="section" id="overview">
+        <h2>01. Межі та принципи роботи</h2>
+
+        <h3>1.1. Функціональна мета</h3>
+        <p>Програма повинна:</p>
+        <ol>
+          <li>Приймати одне пряме URL-посилання на документ із домену <code>zakon.rada.gov.ua</code>.</li>
+          <li>Перевіряти коректність та допустимість URL.</li>
+          <li>Отримувати публічно доступний HTML-вміст сторінки дозволеними засобами.</li>
+          <li>Визначати та зберігати повний текст <strong>чинної редакції</strong> документа.</li>
+          <li>Витягувати метадані: назву, тип, номер, дати, статус, URL-джерело.</li>
+          <li>Зберігати текст у форматі <code>.txt</code> у кодуванні UTF-8.</li>
+          <li>Вести постійну історію всіх запусків та окремі технічні логи.</li>
+          <li>Дозволяти користувачу сформувати зведений файл усіх логів.</li>
+        </ol>
+
+        <h3>1.2. Основний користувацький сценарій</h3>
+        <p>
+          Користувач запускає <code>ZakonDownloader.exe</code>, вставляє пряме
+          посилання на документ, натискає кнопку «Завантажити документ» і отримує
+          повідомлення про результат. У разі успіху програма створює текстовий файл
+          у заздалегідь визначеній папці.
+        </p>
+
+        <h3>1.3. Межі безпеки та законності</h3>
+        <div class="warning">
+          <strong>Принципова вимога</strong>
+          Програма працює лише з відкрито доступними даними та не повинна обходити
+          технічні або правові обмеження ресурсу.
+        </div>
+
+        <p>Застосунок не повинен:</p>
+        <ul>
+          <li>обходити CAPTCHA, антибот-захист або WAF;</li>
+          <li>обходити авторизацію, платний доступ чи обмеження доступу;</li>
+          <li>використовувати проксі, ротацію IP або браузерну автоматизацію для уникнення захисту;</li>
+          <li>підміняти технічні механізми безпеки;</li>
+          <li>використовувати чужі облікові дані або секрети.</li>
+        </ul>
+
+        <p>Допустимі способи отримання тексту:</p>
+        <ul>
+          <li>публічна HTML-сторінка;</li>
+          <li>офіційно доступний API або механізм експорту — якщо він існує й доступний публічно;</li>
+          <li>HTTP-сесія, стандартні cookies та коректні HTTP-заголовки;</li>
+          <li>контрольовані повторні спроби для тимчасових технічних збоїв;</li>
+          <li>дотримання обмеження частоти запитів.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="requirements">
+        <h2>02. Функціональні вимоги</h2>
+
+        <h3>2.1. Структура графічного інтерфейсу</h3>
+        <p>Інтерфейс має бути українською мовою та складатися з таких вкладок:</p>
+        <p>
+          <span class="status">Завантаження</span>
+          <span class="status">Історія</span>
+          <span class="status">Журнали / логи</span>
+          <span class="status">Налаштування</span>
+          <span class="status">Про програму</span>
+        </p>
+
+        <h3>2.2. Вкладка «Завантаження»</h3>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Елемент</th>
+                <th>Призначення</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Поле URL</td>
+                <td>Введення прямого посилання на сторінку документа.</td>
+              </tr>
+              <tr>
+                <td>«Вставити з буфера»</td>
+                <td>Вставляє URL із буфера обміну Windows.</td>
+              </tr>
+              <tr>
+                <td>«Завантажити документ»</td>
+                <td>Запускає валідацію, отримання, парсинг і збереження документа.</td>
+              </tr>
+              <tr>
+                <td>Індикатор процесу</td>
+                <td>Відображає стан виконання без блокування інтерфейсу.</td>
+              </tr>
+              <tr>
+                <td>Область результату</td>
+                <td>Містить статус, назву документа, шлях до файла або опис помилки.</td>
+              </tr>
+              <tr>
+                <td>«Відкрити файл»</td>
+                <td>Активна лише після успішного створення документа.</td>
+              </tr>
+              <tr>
+                <td>«Відкрити папку документів»</td>
+                <td>Відкриває папку зі збереженими файлами.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>2.3. Логіка обробки URL</h3>
+        <ol>
+          <li>Перевірити, що поле URL не порожнє.</li>
+          <li>Переконатися, що URL починається з <code>https://</code>.</li>
+          <li>Переконатися, що домен — <code>zakon.rada.gov.ua</code>.</li>
+          <li>Створити запис в історії зі статусом «Розпочато».</li>
+          <li>Запустити отримання документа у фоновому потоці.</li>
+          <li>Отримати HTML, перевірити відповідь сервера та визначити тип результату.</li>
+          <li>Витягнути метадані й повний текст чинної редакції.</li>
+          <li>Створити та зберегти <code>.txt</code>-файл.</li>
+          <li>Оновити історію та журнал операції.</li>
+          <li>Показати користувачу фінальне повідомлення.</li>
+        </ol>
+
+        <h3>2.4. Політика мережевих запитів</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Параметр</th>
+                <th>Значення</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Таймаут підключення</td><td>10 секунд</td></tr>
+              <tr><td>Таймаут читання відповіді</td><td>30 секунд</td></tr>
+              <tr><td>Максимальна кількість спроб</td><td>3</td></tr>
+              <tr><td>Пауза між повторними спробами</td><td>2, 5, 10 секунд</td></tr>
+              <tr><td>Стратегія повторів</td><td>Exponential backoff</td></tr>
+              <tr><td>Звичайна мінімальна пауза між запитами</td><td>1–2 секунди</td></tr>
+              <tr><td>Паралельні завантаження</td><td>Не підтримуються; один документ за раз</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Повторні спроби дозволені для тимчасових мережевих збоїв та відповідей
+          сервера класу <code>5xx</code>. Для <code>403</code>, <code>429</code>,
+          CAPTCHA або сторінки обмеження доступу застосунок не виконує обхід і
+          завершує операцію контрольованим повідомленням.
+        </p>
+
+        <h3>2.5. Визначення чинної редакції</h3>
+        <ol>
+          <li>Перевірити наявність позначки «чинна редакція», «поточна редакція» або дати редакції.</li>
+          <li>Якщо URL вже веде на чинну редакцію — використовувати саме цей текст.</li>
+          <li>Якщо на сторінці є офіційне відкрите посилання на чинну редакцію — перейти за ним.</li>
+          <li>Якщо дату чинної редакції встановити неможливо — файл не створювати.</li>
+        </ol>
+
+        <div class="warning">
+          <strong>Захист від некоректних даних</strong>
+          Якщо програма не може однозначно підтвердити дату чинної редакції, вона не
+          зберігає документ із потенційно неправдивою назвою файла.
+        </div>
+
+        <h3>2.6. Вимоги до парсингу тексту</h3>
+        <p>Парсер має вилучати з HTML-сторінки:</p>
+        <ul>
+          <li>заголовок, преамбулу, розділи, статті, частини, пункти та підпункти;</li>
+          <li>прикінцеві й перехідні положення;</li>
+          <li>примітки та текстові таблиці, якщо вони належать до документа.</li>
+        </ul>
+
+        <p>Парсер має виключати:</p>
+        <ul>
+          <li>навігацію, меню, кнопки й службові блоки;</li>
+          <li>рекламу та сторонній вміст;</li>
+          <li>JavaScript, CSS і технічні елементи сторінки;</li>
+          <li>дубльовані заголовки та службові посилання.</li>
+        </ul>
+
+        <h3>2.7. Форматування й кодування</h3>
+        <ul>
+          <li>Кодування вихідного файла: <strong>UTF-8 без BOM</strong>.</li>
+          <li>Кирилиця і латиниця мають коректно відображатися у сучасних редакторах.</li>
+          <li>HTML-сутності мають декодуватися.</li>
+          <li>Нерозривні пробіли необхідно замінювати звичайними.</li>
+          <li>Кілька порожніх рядків поспіль скорочуються максимум до двох.</li>
+          <li>Логічна структура абзаців і заголовків має зберігатися.</li>
+          <li>Таблиці, якщо можливо, перетворюються у текст з розділювачем <code>|</code>.</li>
+        </ul>
+
+        <h3>2.8. Ім’я та вміст файлу</h3>
+        <p>Шаблон назви:</p>
+
+        <pre><code>&lt;transliterovana_nazva_dokumenta&gt;_&lt;ДД.ММ.РРРР&gt;.txt</code></pre>
+
+        <p>Приклад:</p>
+
+        <pre><code>pro_zahyst_personalnyh_danyh_01.01.2024.txt</code></pre>
+
+        <p>Правила формування:</p>
+        <ul>
+          <li>назва транслітерується з української в латиницю;</li>
+          <li>слова розділяються символом <code>_</code>;</li>
+          <li>використовується нижній регістр;</li>
+          <li>заборонені символи Windows видаляються або замінюються;</li>
+          <li>максимальна рекомендована довжина назви без розширення — 180 символів;</li>
+          <li>за наявності файла з таким самим ім’ям він перезаписується;</li>
+          <li>за відсутності назви використовується резервний шаблон <code>document_&lt;id&gt;_&lt;date&gt;.txt</code>.</li>
+        </ul>
+
+        <h4>Шаблон вмісту файла</h4>
+        <pre><code>================================================================
+МЕТАДАНІ ДОКУМЕНТА
+================================================================
+Назва: Про захист персональних даних
+Тип документа: Закон України
+Номер: 2297-VI
+Дата ухвалення: 01.06.2010
+Дата чинної редакції: 01.01.2024
+Статус: Чинний
+URL-джерело: https://zakon.rada.gov.ua/...
+Дата та час завантаження: 12.03.2026 14:35:28
+Версія застосунку: 1.0.0
+Кодування: UTF-8
+================================================================
+
+ПОВНИЙ ТЕКСТ ДОКУМЕНТА
+
+[тут розміщується повний нормалізований текст]</code></pre>
+      </section>
+
+      <section class="section" id="history">
+        <h2>03. Історія операцій та журнали</h2>
+
+        <h3>3.1. Історія операцій</h3>
+        <p>
+          Історія має зберігатися локально в базі SQLite, бути доступною у вкладці
+          «Історія» та не очищуватися через графічний інтерфейс.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Поле</th>
+                <th>Зміст</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>ID</td><td>Унікальний ідентифікатор операції.</td></tr>
+              <tr><td>Дата і час запуску</td><td>Час початку обробки URL.</td></tr>
+              <tr><td>Дата і час завершення</td><td>Час успіху або завершення з помилкою.</td></tr>
+              <tr><td>URL</td><td>Посилання, введене користувачем.</td></tr>
+              <tr><td>Назва та номер</td><td>Заповнюються, якщо документ вдалося розпізнати.</td></tr>
+              <tr><td>Дата чинної редакції</td><td>Дата, що використовується у назві файла.</td></tr>
+              <tr><td>Результат</td><td>Успішно, помилка, не знайдено, доступ обмежено тощо.</td></tr>
+              <tr><td>Текст помилки</td><td>Короткий опис причини невдачі.</td></tr>
+              <tr><td>Шлях до файла</td><td>Шлях до створеного TXT, якщо операція успішна.</td></tr>
+              <tr><td>Версія програми</td><td>Версія ZakonDownloader на момент виконання.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Вкладка історії повинна підтримувати:</p>
+        <ul>
+          <li>пошук за назвою, URL, номером документа або статусом;</li>
+          <li>фільтрацію за статусом і датою;</li>
+          <li>сортування за датою;</li>
+          <li>відкриття пов’язаного файла, папки або логу;</li>
+          <li>оновлення таблиці.</li>
+        </ul>
+
+        <div class="note">
+          <strong>Незмінність історії</strong>
+          У GUI не передбачаються кнопки видалення, очищення або редагування
+          історичних записів.
+        </div>
+
+        <h3>3.2. Логи</h3>
+        <p>Логи створюються для кожної операції — і для успішної, і для неуспішної.</p>
+
+        <p>Підтримувані рівні:</p>
+        <p>
+          <span class="status">INFO</span>
+          <span class="status">WARNING</span>
+          <span class="status">ERROR</span>
+          <span class="status">DEBUG</span>
+        </p>
+
+        <p>У технічний лог необхідно записувати:</p>
+        <ul>
+          <li>дату, час, ідентифікатор операції та URL;</li>
+          <li>етап виконання;</li>
+          <li>HTTP-статус, якщо він доступний;</li>
+          <li>кількість спроб;</li>
+          <li>назву та шлях створеного файла;</li>
+          <li>опис помилки і traceback у разі винятку;</li>
+          <li>версію застосунку.</li>
+        </ul>
+
+        <div class="warning">
+          <strong>Обмеження журналювання</strong>
+          Логи не повинні містити cookies у відкритому вигляді, паролі, токени,
+          секрети чи інші чутливі дані.
+        </div>
+
+        <h3>3.3. Об’єднання логів</h3>
+        <p>
+          У вкладці «Журнали / логи» розміщується кнопка
+          <strong>«Створити зведений файл логів»</strong>.
+        </p>
+
+        <ol>
+          <li>Програма знаходить усі файли з папки логів.</li>
+          <li>Упорядковує їх хронологічно.</li>
+          <li>Створює один TXT-файл із заголовком та переліком джерел.</li>
+          <li>Зберігає результат у папці <code>data/exported_logs/</code>.</li>
+          <li>Показує шлях до файла та кнопку відкриття папки.</li>
+        </ol>
+
+        <pre><code>combined_log_ДД.ММ.РРРР_ГГ-ММ-СС.txt</code></pre>
+      </section>
+
+      <section class="section" id="nonfunctional">
+        <h2>04. Нефункціональні вимоги</h2>
+
+        <h3>4.1. Технологічний стек</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Завдання</th>
+                <th>Рекомендована технологія</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>GUI</td><td>PySide6</td></tr>
+              <tr><td>HTTP-клієнт</td><td><code>httpx</code> або <code>requests</code></td></tr>
+              <tr><td>Парсинг HTML</td><td>BeautifulSoup4 + lxml</td></tr>
+              <tr><td>Історія операцій</td><td>SQLite через <code>sqlite3</code></td></tr>
+              <tr><td>Логування</td><td>Стандартний модуль <code>logging</code></td></tr>
+              <tr><td>Транслітерація</td><td>Власна таблиця або бібліотека транслітерації</td></tr>
+              <tr><td>Конфігурація</td><td>JSON</td></tr>
+              <tr><td>Тести</td><td>pytest</td></tr>
+              <tr><td>Пакування у EXE</td><td>PyInstaller</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>4.2. Надійність і продуктивність</h3>
+        <ul>
+          <li>Інтерфейс не повинен зависати під час мережевих операцій.</li>
+          <li>Усі запити виконуються у фоновому потоці через <code>QThread</code> або <code>QRunnable</code>.</li>
+          <li>Критичні винятки обробляються та не завершують роботу GUI аварійно.</li>
+          <li>Запис файла виконується через тимчасовий файл і подальшу атомарну заміну.</li>
+          <li>Перед заміною необхідно перевіряти, що сформований текст не порожній.</li>
+        </ul>
+
+        <h3>4.3. Робочі папки</h3>
+        <pre><code>ZakonDownloader/
+│
+├── ZakonDownloader.exe
+│
+├── data/
+│   ├── documents/       ← завантажені .txt-документи
+│   ├── logs/            ← технічні логи
+│   ├── exported_logs/   ← об’єднані логи
+│   ├── history/         ← history.db
+│   └── temp/            ← тимчасові файли
+│
+└── config/
+    └── settings.json</code></pre>
+
+        <div class="note">
+          <strong>Рекомендоване розташування</strong>
+          Програму не слід запускати з <code>C:\Program Files\</code>, якщо дані
+          зберігаються поруч із EXE. Рекомендований шлях:
+          <code>C:\Users\&lt;Користувач&gt;\Documents\ZakonDownloader\</code>.
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <h2>05. Структура Python-проєкту</h2>
+
+        <pre><code>zakon_downloader/
+│
+├── README.md
+├── requirements.txt
+├── pyproject.toml
+├── build_exe.spec
+├── .gitignore
+│
+├── src/
+│   └── zakon_downloader/
+│       ├── __init__.py
+│       ├── __main__.py
+│       ├── app.py
+│       │
+│       ├── config/
+│       │   ├── constants.py
+│       │   ├── settings.py
+│       │   └── paths.py
+│       │
+│       ├── gui/
+│       │   ├── main_window.py
+│       │   ├── download_tab.py
+│       │   ├── history_tab.py
+│       │   ├── logs_tab.py
+│       │   ├── settings_tab.py
+│       │   ├── about_tab.py
+│       │   ├── dialogs.py
+│       │   └── workers.py
+│       │
+│       ├── services/
+│       │   ├── download_service.py
+│       │   ├── request_client.py
+│       │   ├── parser_service.py
+│       │   ├── document_service.py
+│       │   ├── filename_service.py
+│       │   ├── history_service.py
+│       │   ├── log_service.py
+│       │   └── log_export_service.py
+│       │
+│       ├── repositories/
+│       │   └── history_repository.py
+│       │
+│       ├── models/
+│       │   ├── document.py
+│       │   ├── download_result.py
+│       │   ├── history_entry.py
+│       │   └── app_settings.py
+│       │
+│       ├── parsers/
+│       │   ├── rada_parser.py
+│       │   ├── metadata_parser.py
+│       │   ├── content_parser.py
+│       │   └── html_cleaner.py
+│       │
+│       ├── utils/
+│       │   ├── validators.py
+│       │   ├── transliteration.py
+│       │   ├── date_utils.py
+│       │   ├── text_utils.py
+│       │   └── file_utils.py
+│       │
+│       └── resources/
+│           ├── icons/
+│           └── styles/
+│
+├── tests/
+│   ├── fixtures/
+│   ├── test_validators.py
+│   ├── test_transliteration.py
+│   ├── test_filename_service.py
+│   ├── test_metadata_parser.py
+│   ├── test_content_parser.py
+│   ├── test_history_repository.py
+│   ├── test_log_export_service.py
+│   └── test_download_service.py
+│
+├── scripts/
+│   ├── build_exe.ps1
+│   └── run_tests.ps1
+│
+└── dist/</code></pre>
+
+        <h3>5.1. Призначення ключових компонентів</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Модуль</th>
+                <th>Відповідальність</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>app.py</code></td><td>Ініціалізація GUI, логів, папок і бази історії.</td></tr>
+              <tr><td><code>paths.py</code></td><td>Визначення та створення всіх робочих папок.</td></tr>
+              <tr><td><code>request_client.py</code></td><td>HTTP-сесія, таймаути, retry/backoff, обробка відповідей.</td></tr>
+              <tr><td><code>rada_parser.py</code></td><td>Координація парсингу HTML-сторінки документа.</td></tr>
+              <tr><td><code>metadata_parser.py</code></td><td>Витягування назви, номера, дат, типу та статусу.</td></tr>
+              <tr><td><code>content_parser.py</code></td><td>Витягування та очищення основного тексту документа.</td></tr>
+              <tr><td><code>document_service.py</code></td><td>Формування TXT-файла і безпечний перезапис.</td></tr>
+              <tr><td><code>history_repository.py</code></td><td>Пряма робота з SQLite-історією.</td></tr>
+              <tr><td><code>log_export_service.py</code></td><td>Створення одного зведеного файла логів.</td></tr>
+              <tr><td><code>workers.py</code></td><td>Фонові задачі для GUI без блокування інтерфейсу.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="data-model">
+        <h2>06. Модель даних</h2>
+
+        <h3>6.1. Об’єкт документа</h3>
+        <pre><code>@dataclass
+class Document:
+    title: str
+    document_type: str | None
+    document_number: str | None
+    adoption_date: date | None
+    current_revision_date: date | None
+    status: str | None
+    source_url: str
+    downloaded_at: datetime
+    content: str</code></pre>
+
+        <h3>6.2. Результат операції</h3>
+        <pre><code>@dataclass
+class DownloadResult:
+    operation_id: str
+    success: bool
+    status: str
+    message: str
+    document: Document | None
+    output_file_path: Path | None
+    error_details: str | None
+    attempts_count: int</code></pre>
+
+        <h3>6.3. SQL-таблиця історії</h3>
+        <pre><code>CREATE TABLE IF NOT EXISTS history_entries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    operation_id TEXT NOT NULL UNIQUE,
+    started_at TEXT NOT NULL,
+    finished_at TEXT,
+    source_url TEXT NOT NULL,
+    document_title TEXT,
+    document_number TEXT,
+    revision_date TEXT,
+    status TEXT NOT NULL,
+    user_message TEXT,
+    technical_error TEXT,
+    output_file_path TEXT,
+    log_file_path TEXT,
+    attempts_count INTEGER NOT NULL DEFAULT 0,
+    app_version TEXT NOT NULL
+);</code></pre>
+      </section>
+
+      <section class="section" id="stages">
+        <h2>07. Черговість написання коду</h2>
+
+        <h3>Етап 1. Ініціалізація репозиторію</h3>
+        <ul>
+          <li>Створити Git-репозиторій, віртуальне середовище та структуру папок.</li>
+          <li>Додати залежності: PySide6, HTTP-клієнт, BeautifulSoup4, lxml, pytest, PyInstaller.</li>
+          <li>Створити <code>README.md</code>, <code>.gitignore</code>, <code>pyproject.toml</code>.</li>
+        </ul>
+
+        <h3>Етап 2. Конфігурація, шляхи та системне логування</h3>
+        <ul>
+          <li>Реалізувати константи, конфігурацію та створення папок <code>data/...</code>.</li>
+          <li>Налаштувати файлові логи, формат подій та ротацію логів.</li>
+        </ul>
+
+        <h3>Етап 3. База історії</h3>
+        <ul>
+          <li>Створити SQLite-базу та таблицю <code>history_entries</code>.</li>
+          <li>Реалізувати додавання, оновлення, пошук і фільтрацію записів.</li>
+          <li>Покрити репозиторій unit-тестами.</li>
+        </ul>
+
+        <h3>Етап 4. Валідація URL і допоміжні функції</h3>
+        <ul>
+          <li>Перевірка URL та домену.</li>
+          <li>Транслітерація українського тексту.</li>
+          <li>Формування безпечних імен файлів.</li>
+          <li>Unit-тести для крайніх випадків.</li>
+        </ul>
+
+        <h3>Етап 5. HTTP-клієнт</h3>
+        <ul>
+          <li>Сесія, заголовки, таймаути, retry/backoff.</li>
+          <li>Стандартизована обробка кодів <code>200</code>, <code>403</code>, <code>404</code>, <code>429</code> та <code>5xx</code>.</li>
+          <li>Mock-тести мережевих сценаріїв.</li>
+        </ul>
+
+        <h3>Етап 6. Парсер сторінки документа</h3>
+        <ul>
+          <li>Зібрати локальні HTML-fixtures для тестів.</li>
+          <li>Визначити актуальні селектори фактичної сторінки.</li>
+          <li>Реалізувати парсинг метаданих, основного тексту та виявлення сторінок помилок.</li>
+        </ul>
+
+        <h3>Етап 7. Формування TXT-файла</h3>
+        <ul>
+          <li>Створення метаданого блока.</li>
+          <li>Запис у UTF-8 без BOM.</li>
+          <li>Безпечний перезапис через тимчасовий файл.</li>
+        </ul>
+
+        <h3>Етап 8. Оркестрація сценарію</h3>
+        <ul>
+          <li>Створити <code>download_service.py</code>.</li>
+          <li>З’єднати валідацію, HTTP-клієнт, парсер, збереження, історію та логи.</li>
+          <li>Отримати повністю робочий сценарій без GUI.</li>
+        </ul>
+
+        <h3>Етап 9. Графічний інтерфейс</h3>
+        <ul>
+          <li>Створити головне вікно, вкладки та фонові worker-процеси.</li>
+          <li>Додати перегляд історії, пошук, фільтри й відкриття файлів.</li>
+          <li>Додати зрозумілі повідомлення про успіх і помилки.</li>
+        </ul>
+
+        <h3>Етап 10. Експорт логів</h3>
+        <ul>
+          <li>Сканування папки логів.</li>
+          <li>Хронологічне об’єднання файлів.</li>
+          <li>Збереження результату у <code>data/exported_logs</code>.</li>
+        </ul>
+
+        <h3>Етап 11. Тестування крайніх випадків</h3>
+        <ul>
+          <li>Доступний документ, некоректний URL, сторонній домен.</li>
+          <li><code>404</code>, <code>403</code>, <code>429</code>, таймаут, мережева помилка.</li>
+          <li>Зміна структури HTML, довга назва, існуючий файл.</li>
+          <li>Відсутність прав запису та збереження історії після перезапуску.</li>
+        </ul>
+
+        <h3>Етап 12. Збірка EXE і документація</h3>
+        <ul>
+          <li>Налаштувати PyInstaller і PowerShell-скрипт збірки.</li>
+          <li>Перевірити EXE на Windows 10/11 без встановленого Python.</li>
+          <li>Створити коротку інструкцію користувача.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="acceptance">
+        <h2>08. Критерії приймання</h2>
+
+        <ol>
+          <li>EXE запускається на Windows 10/11 без установленого Python.</li>
+          <li>Користувач може вставити один прямий URL документа.</li>
+          <li>Програма не приймає URL зі сторонніх доменів.</li>
+          <li>Для доступного документа створюється TXT у <code>data/documents</code>.</li>
+          <li>Файл має кодування UTF-8 і коректно відображає кирилицю та латиницю.</li>
+          <li>Назва файла відповідає шаблону транслітерованої назви та дати <code>ДД.ММ.РРРР</code>.</li>
+          <li>За збігу назви існуючий файл перезаписується.</li>
+          <li>На початку TXT є окремий блок метаданих.</li>
+          <li>У файл не потрапляють меню, кнопки та інші службові HTML-елементи.</li>
+          <li>Кожна спроба потрапляє в локальну історію та технічний лог.</li>
+          <li>Історія зберігається після перезапуску й не має функції очищення через GUI.</li>
+          <li>Користувач може сформувати зведений файл логів.</li>
+          <li>За обмеження доступу програма повідомляє користувача, фіксує подію та не обходить захист.</li>
+          <li>Інтерфейс не зависає під час завантаження.</li>
+        </ol>
+
+        <h3>Приклади повідомлень</h3>
+
+        <div class="message-example"><strong>Успішне завантаження</strong>
+
+Документ успішно завантажено та збережено.
+
+Назва: Про захист персональних даних
+Дата чинної редакції: 01.01.2024
+Файл: data\documents\pro_zahyst_personalnyh_danyh_01.01.2024.txt</div>
+
+        <div class="message-example"><strong>Некоректне посилання</strong>
+
+Введене посилання не є коректним URL документа із zakon.rada.gov.ua.
+Перевірте адресу та спробуйте ще раз.</div>
+
+        <div class="message-example"><strong>Обмеження доступу</strong>
+
+Сайт обмежив автоматичний доступ або показав сторінку перевірки.
+Програма не обходить такі обмеження. Деталі записано до журналу.</div>
+
+        <div class="message-example"><strong>Неможливо визначити редакцію</strong>
+
+Програмі не вдалося однозначно визначити чинну редакцію документа.
+Файл не було створено, щоб уникнути збереження некоректних даних.</div>
+      </section>
+    </article>
+
+    <footer>
+      ZakonDownloader · Технічне завдання · Версія 1.0
+    </footer>
+  </main>
+</body>
+</html>
