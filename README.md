@@ -1,130 +1,127 @@
 # ZakonDownloader
 
-Локальний Windows-застосунок для завантаження публічно доступних текстів нормативних документів із `zakon.rada.gov.ua`. Програма формує UTF-8 `.txt`, зберігає історію у SQLite й пропонує два режими інтерфейсу: «Користувач» для щоденної роботи та «Розробник» з додатковими технічними інструментами.
+[English](README.md) | [Українська](README.uk.md) | [Deutsch](README.de.md) | [Français](README.fr.md) | [Español](README.es.md) | [Português](README.pt.md) | [简体中文](README.zh-CN.md)
 
-Застосунок не обходить CAPTCHA, авторизацію, антибот-захист чи обмеження доступу. Не вводьте в нього паролі, API-ключі або токени.
+ZakonDownloader is an open-source Windows desktop application for downloading publicly available legal documents from the official website of the Verkhovna Rada of Ukraine, [`zakon.rada.gov.ua`](https://zakon.rada.gov.ua/). It provides both a Python/PySide6 application and a native C/Win32 application. Both versions use the same settings, document folder, and SQLite history.
 
-## Вимоги
+> **Scope and safety:** The application works with public documents on `zakon.rada.gov.ua`. It does not bypass CAPTCHA, sign-in, anti-bot measures, or access restrictions. Do not enter passwords, API keys, or tokens.
 
-- Windows 10/11, 64-bit
-- Python 3.11 або новіший і Python Launcher (`py`)
-- Доступ до інтернету для отримання документів
+## Features
 
-## Перший запуск у CMD
+- Download a document from its direct HTTPS link in a background operation.
+- Save the result as a UTF-8 `.txt` file and keep a local history in SQLite.
+- Browse the local document library and search or filter download history.
+- Use light or dark appearance and switch between User and Developer interface modes.
+- In the native C application, read saved documents in the built-in viewer, navigate a detected table of contents, search text, save bookmarks and resume reading, adjust text size, copy a source-aware citation, and export a book-style PDF.
+- In the native C application, export history to CSV. The export uses UTF-8 with BOM and is protected against spreadsheet formula interpretation.
 
-```bat
-cd /d C:\path\to\ZakonRadaParser
-py -3 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -e .
-.\.venv\Scripts\python.exe -m zakon_downloader
-```
+The downloader accepts public document URLs on `zakon.rada.gov.ua` in the `/laws/show/<id>` format. It validates HTTPS redirects to the same host, limits response size, and retries temporary failures; it is not a general-purpose website scraper. Downloaded legal texts remain in their source language—the interface language does not translate documents.
 
-`py -3` використовує встановлену версію Python 3. Якщо на комп’ютері встановлено лише кілька версій, можна вказати конкретну, наприклад `py -3.15 -m venv .venv`. Після першого встановлення запускайте програму останньою командою з каталогу проєкту; середовище вручну активувати не потрібно.
+## GUI languages
 
-## Перший запуск у PowerShell
+The native C/Win32 GUI is available in all seven languages below. The Python/PySide6 GUI is currently available in Ukrainian only.
+
+| Interface language | Native C/Win32 | Python/PySide6 |
+|---|:---:|:---:|
+| Ukrainian | Yes | Yes |
+| English | Yes | — |
+| German | Yes | — |
+| French | Yes | — |
+| Spanish | Yes | — |
+| Portuguese | Yes | — |
+| Simplified Chinese | Yes | — |
+
+In the native C application, change the language in **Settings → Interface language**. The selection is saved in `settings.json`; it does not change the language of downloaded documents. The README variants linked above cover every GUI language.
+
+## Requirements
+
+- Windows 10 or Windows 11, 64-bit.
+- Internet access to retrieve documents.
+- Python 3.11 or newer and the Python Launcher (`py`) to run the Python version.
+- Zig 0.17.0 with `zig cc` to build the native C version.
+
+## Run the Python version
+
+In PowerShell, clone the repository and run the following commands from its root:
 
 ```powershell
-Set-Location C:\path\to\ZakonRadaParser
+git clone https://github.com/Danuha99/ZakonRadaParser.git
+Set-Location ZakonRadaParser
 py -3 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
 .\.venv\Scripts\python.exe -m pip install -e .
 .\.venv\Scripts\python.exe -m zakon_downloader
 ```
 
-У командах замініть `C:\path\to\ZakonRadaParser` на фактичну папку клонованого репозиторію або відкрийте термінал у корені проєкту й пропустіть команду переходу.
+You do not need to activate the virtual environment; invoke its Python executable as shown. Replace the Python version selector if you need a specific installed version, for example `py -3.11`.
 
-## Режими інтерфейсу
+### Build a standalone Python executable
 
-Режим перемикається у верхній панелі та запам’ятовується після перезапуску. «Користувач» показує огляд, завантаження, історію та базові параметри вигляду й папки документів. «Розробник» відкриває також технічні журнали, розширені параметри мережі й журналювання та інформаційний розділ. Це лише перемикання подання інтерфейсу, а не межа безпеки чи доступу.
-
-## Розділи програми
-
-- **Огляд:** перегляньте загальну кількість операцій, успішні завантаження, помилки та останні результати; кнопка «Нове завантаження» відкриває форму, а подвійне клацання по успішній операції відкриває збережений файл.
-- **Завантаження:** вставте пряме посилання, дочекайтеся завершення фонової операції; звідси можна відкрити отриманий файл або папку документів.
-- **Історія:** шукайте записи, фільтруйте за статусом і датою, сортуйте таблицю та відкривайте наявний файл. Записи неможливо видалити з GUI.
-- **Журнали:** переглядайте журнали й створюйте зведений UTF-8 TXT у папці експорту.
-- **Налаштування:** зберігайте тему, папку документів, таймаути, кількість спроб і рівень журналювання. Налаштування набувають чинності після натискання кнопки збереження.
-- **Про програму:** опис роботи, політика безпеки та швидкий доступ до папок даних і офіційного сайту.
-
-Параметри зберігаються в `%USERPROFILE%\ZakonDownloader\config\settings.json`. Документи, SQLite-історія, журнали й зведені експорти розміщуються в `%USERPROFILE%\ZakonDownloader\data\`. Не видаляйте цю теку, якщо потрібно зберегти користувацькі дані.
-
-## Тести
-
-Перед тестами або збиранням Python `.exe` встановіть dev-залежності (pytest і PyInstaller):
+Install the development dependencies, then run the packaging script from PowerShell:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
-```
-
-У CMD:
-
-```bat
-.\.venv\Scripts\python.exe -m pytest -q
-```
-
-У PowerShell також доступно:
-
-```powershell
-.\scripts\run_tests.ps1
-```
-
-## Збирання автономного `.exe`
-
-У PowerShell:
-
-```powershell
 .\scripts\build_exe.ps1
 ```
 
-Із CMD можна запустити той самий сценарій так:
+The executable is written to `dist\ZakonDownloader.exe`.
 
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_exe.ps1
-```
+## Build the native C/Win32 version
 
-Готовий файл з’явиться в `dist\ZakonDownloader.exe`.
-
-## Нативна версія мовою C
-
-Паралельно з Python-версією доступна окрема нативна Windows-програма. Код Python не видалено й можна й надалі запускати командою `py -3 -m zakon_downloader`. Для збирання C-версії потрібен Zig (`zig cc`): у PowerShell виконайте `.\scripts\build_native_c.ps1`, а потім запустіть `.\native_c\dist\ZakonDownloader.exe`. Сценарій спочатку запускає offline-тести парсера та інтеграційні тести SQLite/налаштувань. Якщо Zig не в PATH, передайте його розташування через `-ZigPath 'C:\Tools\zig\zig.exe'`.
-
-C-версія використовує ті самі користувацькі налаштування, папку документів та SQLite-історію, що й Python-версія. Детальні кроки збірки, сумісність і межі функціональності наведені у [`native_c/README.md`](native_c/README.md). Звичайний запуск C-програми після збірки — `.\native_c\dist\ZakonDownloader.exe`.
-
-
-### Локальний перегляд і PDF у C-версії
-
-У C-застосунку відкрийте **«Мої документи»**, виберіть збережений TXT-файл і натисніть **«Читати в програмі»**. У переглядачі доступні чистий або повний текст, пошук фрази, відкриття перевіреного першоджерела в браузері та самого TXT-файлу. **«Експортувати PDF»** створює поряд із TXT окремий книжково оформлений PDF і не змінює оригінал; для цього має бути доступний системний принтер **Microsoft Print to PDF**. Повні інструкції: [`native_c/README.md`](native_c/README.md).
-
-
-## Нові можливості нативної C-версії 1.2.0-C
-
-1. **Зміст закону:** у переглядачі автоматично з’являються знайдені розділи, глави й статті; вибір пункту прокручує документ до відповідного місця.
-2. **Закладки та продовження читання:** збережіть позицію кнопкою **«Закладка +»**. Закладки прив’язані до локального файла; поточне місце читання автоматично зберігається під час роботи та відновлюється при повторному відкритті. Дані зберігаються в додаткових таблицях наявної SQLite-бази історії, без перезапису старих записів.
-3. **Масштаб тексту:** кнопки **A− / A+** змінюють книжковий шрифт у межах 14–30 px.
-4. **Цитата з джерелом:** виділіть уривок і натисніть **«Копіювати цитату»** — у буфер копіюється текст, назва закону та посилання на джерело (або локальний шлях, якщо посилання відсутнє).
-5. **CSV-експорт історії:** кнопка **«Експорт CSV»** у розділі «Історія» створює файл з усіма записами, незалежно від поточних фільтрів. Експорт виконується у фоні, має UTF-8 BOM для табличних редакторів і захищає текстові поля від інтерпретації як формул. Файли з унікальними іменами з’являються в `%USERPROFILE%\ZakonDownloader\data\exported_logs\`.
-
-Для швидкодії текстовий фільтр бібліотеки тепер повторно використовує вже відсортований список файлів і не сканує папку заново на кожне натискання клавіші; оновлення таблиці згруповано, а CSV формується у фоновому потоці. Збірка прибирає з `native_c\dist` зайвий PDB-файл, який не потрібен для запуску програми.
-
-
-## Оновлення нативної C-версії 1.3.0-C
-
-- Інтерфейс C-програми підтримує українську, англійську, німецьку, французьку, іспанську, португальську та спрощену китайську. Мова перемикається одразу в **Налаштуваннях → Мова інтерфейсу** й записується до `settings.json`; тексти документів не перекладаються. Python-версія інтерфейсу лишається українською, але зберігає обрану мовну настройку C-версії під час власного збереження параметрів.
-- Додано оригінальний знак бренду, готовий SVG lockup і багаторозмірні Windows-іконки; вони вбудовуються в `.exe`. Збережено вихідні світлу й темну палітри, додано акуратніші типографіку, тіні карток та адаптоване розміщення мовного вибору.
-- Переклад зберігається у `native_c/locales/ui-translations.json`; `scripts/generate_i18n.py` перевіряє placeholders і переноси рядків та генерує C-каталог. Під час запуску переклад шукається бінарним пошуком у статичному масиві — окремі файли мов чи додаткові runtime-бібліотеки не потрібні.
-- Збірка тепер запускає окремий набір тестів каталогу локалізації та компілює іконки до ресурсів програми. Якщо вікно вже працює, збірка не перезаписуватиме саме той `.exe`; для паралельної тестової збірки можна вказати інший файл:
+From the repository root in PowerShell:
 
 ```powershell
-.\scripts\build_native_c.ps1 -OutputPath .work\candidate\ZakonDownloader.exe
+.\scripts\build_native_c.ps1
+.\native_c\dist\ZakonDownloader.exe
 ```
 
-За замовчуванням новий виконуваний файл: `native_c\dist\ZakonDownloader.exe`. Після оновлення коду програму потрібно перезапустити, щоб отримати новий інтерфейс.
+The build requires Zig 0.17.0 (`zig cc`) in `PATH`. If Zig is installed elsewhere, provide its path:
 
-## Портфоліо та відкрита ліцензія
+```powershell
+.\scripts\build_native_c.ps1 -ZigPath 'C:\Tools\zig\zig.exe'
+```
 
-Цей проєкт є частиною мого портфоліо. Мій профіль: [Fiverr](https://www.fiverr.com/s/aeeRdX7).
+The build script runs the native parser, localization, settings/history, and related checks before producing the 64-bit GUI executable. The output is `native_c\dist\ZakonDownloader.exe`.
 
-У репозиторії доступні повні вихідні тексти Python- та C-версій, тести, ресурси й сценарії збірки. Програму можна безоплатно використовувати, змінювати й поширювати згідно з [MIT License](LICENSE). MIT також дозволяє комерційне використання, повторне поширення та похідні проєкти; потрібно зберігати повідомлення про авторські права й текст ліцензії. Програма надається «як є», без гарантій.
+## Local reader and exports
 
-Локальний `.venv`, `.work`, користувацькі дані й зібрані файли в `native_c/dist` та `outputs` виключаються з Git. Виконуваний файл і ZIP доцільно додавати окремими файлами до GitHub Release, а не зберігати в історії вихідного коду.
+In the native C application, open **My Documents**, select a saved `.txt` file, and choose **Read in app**. The reader can show the clean legal text or the full saved file, find text, navigate detected sections, preserve bookmarks and reading position, and copy a quotation with its title and source URL. **Export PDF** creates a separate book-style PDF next to the text file; it requires the Windows **Microsoft Print to PDF** printer and does not modify the original `.txt` file.
+
+CSV history exports are written to `%USERPROFILE%\ZakonDownloader\data\exported_logs\`. Existing documents and history entries are not removed by these exports.
+
+## Data locations
+
+Both applications share these locations by default:
+
+| Data | Default path |
+|---|---|
+| Settings | `%USERPROFILE%\ZakonDownloader\config\settings.json` |
+| Documents | `%USERPROFILE%\ZakonDownloader\data\documents` |
+| SQLite history | `%USERPROFILE%\ZakonDownloader\data\history\history.db` |
+| Native C log | `%USERPROFILE%\ZakonDownloader\data\logs\native_c.log` |
+
+The document folder can be changed in the application settings. Back up the `ZakonDownloader` data folder before moving or deleting it if you need to keep downloaded files, settings, bookmarks, or history.
+
+## Tests
+
+Install the development dependencies and run the Python test suite from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Alternatively, run `scripts\run_tests.ps1` in PowerShell. The native C build script runs its own tests by default; `-SkipTests` is available but is not recommended for routine builds.
+
+## Repository layout
+
+- `src/zakon_downloader/` — Python application.
+- `native_c/` — native C/Win32 application, translations, assets, and tests.
+- `tests/` — Python tests.
+- `scripts/` — build, test, and localization-generation scripts.
+
+## License and project
+
+Released under the [MIT License](LICENSE). The license permits use, modification, redistribution, and commercial use subject to its terms.
+
+This project is part of my software portfolio: [Fiverr profile](https://www.fiverr.com/s/aeeRdX7).
